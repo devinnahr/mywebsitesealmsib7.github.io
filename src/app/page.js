@@ -1,112 +1,180 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-export default function Home() {
+// Function to fetch posts from a specific category
+async function fetchCategory(category) {
+  try {
+    const res = await fetch(`https://api-berita-indonesia.vercel.app/cnn/${category}`);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${category}`);
+    }
+    const data = await res.json();
+    // Ensure that data.data and data.data.posts exist
+    return data?.data?.posts || [];
+  } catch (error) {
+    console.error(error);
+    return []; // Return an empty array if there's an error
+  }
+}
+
+export default async function Page() {
+  // Fetch data for each category
+  const [terbaru, nasional, internasional, ekonomi, olahraga, teknologi, hiburan, gayaHidup] = await Promise.all([
+    fetchCategory('terbaru'),
+    fetchCategory('nasional'),
+    fetchCategory('internasional'),
+    fetchCategory('ekonomi'),
+    fetchCategory('olahraga'),
+    fetchCategory('teknologi'),
+    fetchCategory('hiburan'),
+    fetchCategory('gaya%20hidup'),
+  ]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <main className="container mx-auto px-4 py-8">
+      {/* Featured News */}
+      <section className="mb-8">
+        <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
+          <div className="w-1/2 text-center">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Featured News Title</h2>
+            <p className="text-gray-600">Brief description of the featured news article goes here.</p>
+          </div>
+          <div className="w-1/2 pr-4">
+            <img
+              src="/hero.jpg"
+              alt="Featured News"
+              className="w-full h-auto object-cover rounded-lg"
             />
-          </a>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      {/* News Categories */}
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">News Categories</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Terbaru Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={terbaru[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Terbaru"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Terbaru</h3>
+            <p className="text-gray-600">{terbaru[0]?.description || 'Brief description of this category.'}</p>
+          </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          {/* Nasional Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={nasional[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Nasional"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Nasional</h3>
+            <p className="text-gray-600">{nasional[0]?.description || 'Brief description of this category.'}</p>
+          </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+          {/* Internasional Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={internasional[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Internasional"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Internasional</h3>
+            <p className="text-gray-600">{internasional[0]?.description || 'Brief description of this category.'}</p>
+          </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+          {/* Ekonomi Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={ekonomi[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Ekonomi"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Ekonomi</h3>
+            <p className="text-gray-600">{ekonomi[0]?.description || 'Brief description of this category.'}</p>
+          </div>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          {/* Olahraga Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={olahraga[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Olahraga"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Olahraga</h3>
+            <p className="text-gray-600">{olahraga[0]?.description || 'Brief description of this category.'}</p>
+          </div>
+
+          {/* teknologi Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={teknologi[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Teknologi"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Teknologi</h3>
+            <p className="text-gray-600">{teknologi[0]?.description || 'Brief description of this category.'}</p>
+          </div>
+
+          {/* hiburan Category */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <Image
+              src={hiburan[0]?.thumbnail || 'path/to/category-image.jpg'}
+              alt="Hiburan"
+              width={360}
+              height={200}
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-800">Hiburan</h3>
+            <p className="text-gray-600">{hiburan[0]?.description || 'Brief description of this category.'}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Recommended for You */}
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recommended for You</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {terbaru.map((post) => (
+            <div key={post.link} className="bg-white p-4 rounded-lg shadow-md">
+              <Image
+                src={post.thumbnail}
+                alt={post.title}
+                width={360}
+                height={200}
+                className="w-full h-32 object-cover rounded-lg mb-4"
+              />
+              <h3 className="text-lg font-semibold text-gray-800">{post.title}</h3>
+              <p className="text-gray-600">{post.description}</p>
+              <a href={post.link} className="text-blue-600 hover:underline mt-2 block">Read more</a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pagination */}
+      <div className="flex justify-center">
+        <nav className="inline-flex shadow-sm">
+          <a href="#" className="px-4 py-2 bg-white border rounded-l-lg text-gray-600 hover:bg-gray-100">Previous</a>
+          <a href="#" className="px-4 py-2 bg-white border-t border-b text-gray-600 hover:bg-gray-100">1</a>
+          <a href="#" className="px-4 py-2 bg-white border-t border-b text-gray-600 hover:bg-gray-100">2</a>
+          <a href="#" className="px-4 py-2 bg-white border-t border-b text-gray-600 hover:bg-gray-100">3</a>
+          <a href="#" className="px-4 py-2 bg-white border rounded-r-lg text-gray-600 hover:bg-gray-100">Next</a>
+        </nav>
       </div>
     </main>
   );
